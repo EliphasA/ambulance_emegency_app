@@ -12,7 +12,7 @@ class User extends StatefulWidget {
 
 class UserState extends State<User> {
   //Add user api link
-  static const ADD_USER_URL = "http://192.168.0.200/emegency_app/add_user.php";
+  static const ADD_USER_URL = "http://192.168.43.239/emegency_app/add_user.php";
   final _formKey = GlobalKey<FormState>();
 
   // Defining text field input controllers
@@ -30,7 +30,6 @@ class UserState extends State<User> {
   bool checkStatus = false;
   File imageFile = File("");
   String imageData = "";
-  bool _isHidden = true;
 
   choiceImage() async {
     var pickedImage =
@@ -57,16 +56,19 @@ class UserState extends State<User> {
       "Email": _emailController.text,
       "town_city": _townCityController.text,
       "username": _usernameController.text,
+      "password": _passwordController.text,
       "profile": imageData,
     };
 
-    var response = await http.post(Uri.parse(ADD_USER_URL), body: data);
+    var response = await http.post(
+        Uri.parse(ADD_USER_URL + "?user_type=" + Uri.encodeComponent("user")),
+        body: data);
     if (response.statusCode == 200) {
       print(response.body);
       print("success");
       Navigator.pop(context as BuildContext);
     } else {
-      print(response.statusCode);
+      print(response.body);
       print("failure");
     }
   }
@@ -134,7 +136,13 @@ class UserState extends State<User> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        TextField(
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter patient name';
+                            }
+                            return null;
+                          },
                           controller: _patientNameController,
                           decoration: InputDecoration(
                             labelText: 'Patient name',
@@ -147,7 +155,13 @@ class UserState extends State<User> {
                           ),
                         ),
                         const SizedBox(height: 15.0),
-                        TextField(
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter patient address';
+                            }
+                            return null;
+                          },
                           controller: _patientAddressController,
                           decoration: InputDecoration(
                             labelText: 'Patient address',
@@ -159,7 +173,13 @@ class UserState extends State<User> {
                           ),
                         ),
                         const SizedBox(height: 15.0),
-                        TextField(
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter cellphone number';
+                            }
+                            return null;
+                          },
                           controller: _cellphoneController,
                           decoration: InputDecoration(
                             labelText: 'Cellphone',
@@ -171,7 +191,13 @@ class UserState extends State<User> {
                           ),
                         ),
                         const SizedBox(height: 15),
-                        TextField(
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter email address';
+                            }
+                            return null;
+                          },
                           controller: _emailController,
                           decoration: InputDecoration(
                             labelText: 'Email address',
@@ -184,7 +210,13 @@ class UserState extends State<User> {
                           ),
                         ),
                         const SizedBox(height: 15.0),
-                        TextField(
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter town or city';
+                            }
+                            return null;
+                          },
                           controller: _townCityController,
                           decoration: InputDecoration(
                             labelText: 'Town/City',
@@ -197,7 +229,13 @@ class UserState extends State<User> {
                           ),
                         ),
                         const SizedBox(height: 15.0),
-                        TextField(
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter usename';
+                            }
+                            return null;
+                          },
                           controller: _usernameController,
                           decoration: InputDecoration(
                             labelText: 'Username',
@@ -210,7 +248,14 @@ class UserState extends State<User> {
                           ),
                         ),
                         const SizedBox(height: 15.0),
-                        TextField(
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter password';
+                            }
+                            return null;
+                          },
+                          obscureText: true,
                           controller: _passwordController,
                           decoration: InputDecoration(
                             labelText: 'Password',
@@ -223,8 +268,19 @@ class UserState extends State<User> {
                           ),
                         ),
                         const SizedBox(height: 15.0),
-                        TextField(
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter password';
+                            }
+                            if (value.isNotEmpty &&
+                                value != _passwordController.text) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
+                          },
                           controller: _confirmPasswordController,
+                          obscureText: true,
                           decoration: InputDecoration(
                             labelText: 'Confirm password',
                             labelStyle: GoogleFonts.poppins(fontSize: 16),
@@ -251,11 +307,14 @@ class UserState extends State<User> {
                               ])),
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginPage()),
-                              );
+                              if (_formKey.currentState!.validate()) {
+                                addUser();
+                              }
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) => const LoginPage()),
+                              // );
                             },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(

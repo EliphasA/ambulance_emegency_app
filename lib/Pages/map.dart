@@ -1,3 +1,4 @@
+import 'package:ambulance_emegency_app/Account/Login/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,7 +21,7 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       drawer: Drawer(
         backgroundColor: const Color.fromRGBO(255, 255, 255, 0.85),
-        width: MediaQuery.of(context).size.width / 2,
+        width: MediaQuery.of(context).size.width * 0.60,
         child: ListView(
           children: [
             Container(
@@ -155,7 +156,12 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ),
               onTap: () {
-                // Navigate to the settings page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      // ignore: prefer_const_constructors
+                      builder: (context) => LoginPage()),
+                );
               },
             ),
           ],
@@ -189,7 +195,27 @@ class _MapScreenState extends State<MapScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              print(value);
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                child: Text('Item 1'),
+                value: 'item_1',
+              ),
+              const PopupMenuItem(
+                child: Text('Item 2'),
+                value: 'item_2',
+              ),
+              const PopupMenuItem(
+                child: Text('Item 3'),
+                value: 'item_3',
+              ),
+            ],
+          );
+        },
         backgroundColor: Colors.red[700],
         label: Text(
           "Request Ambulance",
