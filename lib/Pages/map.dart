@@ -24,7 +24,7 @@ class _MapScreenState extends State<MapScreen> {
         width: MediaQuery.of(context).size.width * 0.60,
         child: ListView(
           children: [
-            Container(
+             Container(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: const EdgeInsets.only(left: 15, top: 10, bottom: 10),

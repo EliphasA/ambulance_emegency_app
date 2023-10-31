@@ -12,7 +12,7 @@ class User extends StatefulWidget {
 
 class UserState extends State<User> {
   //Add user api link
-  static const ADD_USER_URL = "http://192.168.43.239/emegency_app/add_user.php";
+  static const ADD_USER_URL = "http://192.168.0.200/emegency_app/add_user.php";
   final _formKey = GlobalKey<FormState>();
 
   // Defining text field input controllers
@@ -63,10 +63,36 @@ class UserState extends State<User> {
     var response = await http.post(
         Uri.parse(ADD_USER_URL + "?user_type=" + Uri.encodeComponent("user")),
         body: data);
+
     if (response.statusCode == 200) {
       print(response.body);
       print("success");
-      Navigator.pop(context as BuildContext);
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(
+            'Sucess Message',
+            style: GoogleFonts.poppins(),
+          ),
+          content: Text(
+            'Successfully registered patient!',
+            style: GoogleFonts.poppins(color: Colors.green[700]),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        // ignore: prefer_const_constructors
+                        builder: (context) => LoginPage()));
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     } else {
       print(response.body);
       print("failure");
